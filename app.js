@@ -1,16 +1,32 @@
 // ============================================================
-// データの読み込み・保存（ブラウザのlocalStorageを使用）
+// Firebase 初期化
 // ============================================================
 
+firebase.initializeApp({
+  apiKey: "AIzaSyCfvqQWLB8NJqmaH0k2G0wPcbJJjz2Vu4A",
+  authDomain: "kaimemo-58bad.firebaseapp.com",
+  projectId: "kaimemo-58bad",
+  storageBucket: "kaimemo-58bad.firebasestorage.app",
+  messagingSenderId: "308069117698",
+  appId: "1:308069117698:web:c61a57853abb7e8ffb1c1b"
+});
+const db = firebase.firestore();
+const docRef = db.collection('data').doc('kakeibo');
+
+// ============================================================
+// データの読み込み・保存（Firebase Firestore）
+// ============================================================
+
+let state = { banks: [], transactions: [] };
+
 function loadData() {
-  const banks = JSON.parse(localStorage.getItem('kakeibo_banks') || '[]');
-  const transactions = JSON.parse(localStorage.getItem('kakeibo_transactions') || '[]');
-  return { banks, transactions };
+  return { banks: state.banks, transactions: state.transactions };
 }
 
 function saveData(banks, transactions) {
-  localStorage.setItem('kakeibo_banks', JSON.stringify(banks));
-  localStorage.setItem('kakeibo_transactions', JSON.stringify(transactions));
+  state.banks = banks;
+  state.transactions = transactions;
+  docRef.set({ banks, transactions }).catch(err => console.error('保存エラー:', err.message));
 }
 
 // ============================================================
@@ -375,5 +391,20 @@ function escapeHtml(str) {
 // 今日の日付をデフォルトにセット
 document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
 
-// 初回描画
-renderAll();
+// Firestoreリアルタイム同期 & localStorageからの自動移行
+docRef.onSnapshot(snap => {
+  const data = snap.exists ? (snap.data() || { banks: [], transactions: [] }) : { banks: [], transactions: [] };
+
+  // Firestoreが空の場合、localStorageからデータを移行する
+  if (!snap.exists || (data.banks.length === 0 && data.transactions.length === 0)) {
+    const localBanks = JSON.parse(localStorage.getItem('kakeibo_banks') || '[]');
+    const localTx = JSON.parse(localStorage.getItem('kakeibo_transactions') || '[]');
+    if (localBanks.length > 0 || localTx.length > 0) {
+      docRef.set({ banks: localBanks, transactions: localTx });
+      return;
+    }
+  }
+
+  state = data;
+  renderAll();
+});
