@@ -30,6 +30,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-x: hidden;
 }
 
 .card {
@@ -92,11 +93,14 @@ select {
   font-size: 0.95rem;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   outline: none;
   transition: border-color 0.2s;
   background: #252d3f;
   color: #d1d9e6;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 input:focus,
