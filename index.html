@@ -75,19 +75,21 @@
         <button onclick="renderHistory()">絞り込み</button>
         <button class="btn-bulk-delete" onclick="bulkDeleteTransactions()">一括削除</button>
       </div>
-      <table id="history-table">
-        <thead>
-          <tr>
-            <th>日付</th>
-            <th>種類</th>
-            <th>銀行口座</th>
-            <th>金額</th>
-            <th>メモ</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="history-body"></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>種類</th>
+              <th>銀行口座</th>
+              <th>金額</th>
+              <th>メモ</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
       <p id="no-history" class="empty-message">取引がありません</p>
     </section>
 
