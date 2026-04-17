@@ -385,8 +385,65 @@ function escapeHtml(str) {
 }
 
 // ============================================================
+// 天気予報（横浜・明日）
+// ============================================================
+
+const WMO_LABELS = {
+  0: '快晴', 1: 'ほぼ晴れ', 2: '一部曇り', 3: '曇り',
+  45: '霧', 48: '霧',
+  51: '霧雨', 53: '霧雨', 55: '強い霧雨',
+  56: 'みぞれ', 57: 'みぞれ',
+  61: '小雨', 63: '雨', 65: '大雨',
+  66: 'みぞれ', 67: 'みぞれ',
+  71: '小雪', 73: '雪', 75: '大雪', 77: 'あられ',
+  80: 'にわか雨', 81: 'にわか雨', 82: 'にわか豪雨',
+  85: 'にわか雪', 86: 'にわか大雪',
+  95: '雷雨', 96: '雷雨', 99: '激しい雷雨'
+};
+
+const RAIN_CODES = new Set([51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99]);
+
+async function loadWeather() {
+  const el = document.getElementById('weather-content');
+  try {
+    const res = await fetch(
+      'https://api.open-meteo.com/v1/forecast?latitude=35.4437&longitude=139.6380' +
+      '&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min' +
+      '&timezone=Asia%2FTokyo'
+    );
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+
+    const code   = data.daily.weathercode[1];
+    const precip = data.daily.precipitation_sum[1];
+    const tMax   = Math.round(data.daily.temperature_2m_max[1]);
+    const tMin   = Math.round(data.daily.temperature_2m_min[1]);
+    const label  = WMO_LABELS[code] || '不明';
+    const umbrella = RAIN_CODES.has(code) || precip > 0;
+
+    el.innerHTML = `
+      <div class="weather-row">
+        <div class="weather-left">
+          <span class="weather-title">明日の横浜</span>
+          <span class="weather-condition">${label}</span>
+          <span class="weather-temp">${tMin}° / ${tMax}°C</span>
+          ${precip > 0 ? `<span class="weather-precip">降水量 ${precip}mm</span>` : ''}
+        </div>
+        <div class="weather-umbrella ${umbrella ? 'umbrella-yes' : 'umbrella-no'}">
+          ${umbrella ? '傘を持って出かけましょう' : '傘は不要です'}
+        </div>
+      </div>
+    `;
+  } catch {
+    el.innerHTML = '<span class="weather-error">天気情報を取得できませんでした</span>';
+  }
+}
+
+// ============================================================
 // 初期化
 // ============================================================
+
+loadWeather();
 
 // 今日の日付をデフォルトにセット
 document.getElementById('input-date').value = new Date().toISOString().split('T')[0];

@@ -360,6 +360,68 @@ tr:hover td {
   -webkit-overflow-scrolling: touch;
 }
 
+/* 天気ウィジェット */
+.weather-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.weather-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.weather-title {
+  font-size: 0.8rem;
+  color: #8a97b0;
+}
+
+.weather-condition {
+  font-size: 1rem;
+  color: #e0e6f0;
+  font-weight: bold;
+}
+
+.weather-temp {
+  font-size: 0.95rem;
+  color: #93c5fd;
+}
+
+.weather-precip {
+  font-size: 0.8rem;
+  color: #a0aec0;
+}
+
+.weather-umbrella {
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.umbrella-yes {
+  background: #1e3a5a;
+  color: #60a5fa;
+  border: 1px solid #3a6090;
+}
+
+.umbrella-no {
+  background: #1a3a2a;
+  color: #4ade80;
+  border: 1px solid #2a6040;
+}
+
+.weather-loading,
+.weather-error {
+  font-size: 0.85rem;
+  color: #8a97b0;
+}
+
 /* ── スマホ対応 ── */
 @media (max-width: 600px) {
   .form-grid {
